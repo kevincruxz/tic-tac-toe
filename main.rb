@@ -1,14 +1,5 @@
-# Construir 1 clase llamada Player donde se guardaran las elecciones de cada jugador
-# El tablero va a ser un array donde pa checar el ganador se loopeara cada que se haga una eleccion
-# Cada que se haga la eleccion se comprobara si hay ganador primero horizontal (3), luego vertical (3) 
-# Y luego diagonal (2) 
-# Pa las elecciones se usara otra clase llamada Election, donde se crearan los objetos, estos objetos
-# Seran pasados a Player cada que se cree uno nuevo y se colocaran dentro del array tablero
-# El juego en si va a ser una loop de preguntas sobre donde colocar su eleccion (1 - 9)
-# 
-
 class Player
-    @@board = Array.new(3, 3)
+    @@board = [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]]
     attr_reader :name
 
     def initialize(name, symbol)
@@ -29,6 +20,41 @@ class Player
     def board
         @@board
     end
+
+    def check_if_winner
+        counter = 0
+        # Check if winner horizontally
+        @@board.each do |row|
+            row.each do |square|
+                if square == @symbol
+                    counter += 1
+                    if counter == 3
+                        return true
+                    end
+                end
+            end
+            counter = 0
+        end
+        # Check if winner vertically
+        for i in (0..2) do
+            for j in (0..2) do
+                if @@board[j][i] == @symbol
+                    counter += 1
+                    if counter == 3
+                        return true
+                    end
+                end
+            end
+            counter = 0
+        end
+        # Check if winner diagonal
+        if @@board[0][0] == @symbol && @@board[1][1] == @symbol && @@board[2][2] == @symbol or #Checks first diagonal
+            @@board[0][2] == @symbol && @@board[1][1] == @symbol && @@board[2][0] == @symbol #Checks second diagonal
+            return true
+        end
+            
+        false # returns false if it is not a winner yet
+    end
 end
 
 # Make a function to display the current board
@@ -41,14 +67,14 @@ end
 def game_start
     print "Player 1, Write your name: "
     name = gets.chomp
-    print "Hello #{name1}!, now choose the symbol with you will play with: "
+    print "Hello #{name}!, now choose the symbol with you will play with: "
     symbol = gets.chomp
     player1 = Player.new(name, symbol) #Creating the object for the player #1
     puts "Ok player 1, all set, your name is #{name} & your symbol is #{symbol}\n"
     
     print "Player 2, Write your name: "
     name = gets.chomp
-    print "Hello #{name1}!, now choose the symbol with you will play with: "
+    print "Hello #{name}!, now choose the symbol with you will play with: "
     symbol = gets.chomp
     player2 = Player.new(name, symbol) #Creating the object for the player #2
     puts "Ok player 2, all set, your name is #{name} & your symbol is #{symbol}\n"
@@ -57,37 +83,51 @@ def game_start
 end
 
 def game(player1, player2)
-     validate_election(player1)
-     check_if_winner()
-
-     validate_election(player2)
-     check_if_winner()
+    is_winner = false
+    while true
+        validate_election(player1)
+        is_winner = player1.check_if_winner
+        if is_winner
+            puts "#{player1.name} wins!"
+            break
+        end
+   
+        validate_election(player2)
+        player2.check_if_winner 
+        if is_winner
+            puts "#{player2.name} wins!"
+            break
+        end
+    end
 end
 
 def validate_election(player)
+    election = ""
     while true
-        puts print_board()
+        #puts print_board()
         print "#{player.name}, choose your next move: "
         election = gets.chomp
-        while true
-            begin
-                election = election.to_i
-            rescue
-                puts "That is not a number."
-            else
-                if election <= 3 && election >= 0
-                    break if player.board[0][election - 1] == nil
-                elsif election <= 6 && election >= 4
-                    break if player.board[election - 4] == nil
-                elsif election <= 9 && election >= 7
-                    break if player.board[2][election - 7] == nil
-                else
-                    puts "You cannot put your play there."
-                end
+        
+        election = election.to_i
+        board = player.board
+        
+        if election <= 3 && election > 0
+            if board[0][election - 1] == nil
+                break 
             end
+        elsif election <= 6 && election >= 4
+            if board[1][election - 4] == nil
+                break 
+            end
+        elsif election <= 9 && election >= 7
+            if board[2][election - 7] == nil
+                break 
+            end
+        else
+            puts "Wut?."
         end
-        player.new_election(election)
     end
+    player.new_election(election)
 end
 
 game_start()
