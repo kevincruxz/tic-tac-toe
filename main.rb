@@ -94,6 +94,10 @@ def game_start
     name = gets.chomp
     print "Hello #{name}!, now choose the symbol with you will play with: "
     symbol = gets.chomp
+    while symbol.ord <= 32 || symbol.ord >= 48 && symbol.ord <= 57 || symbol.length != 1
+        print "Invalid symbol! Enter another one (1 character long, no numbers): "
+        symbol = gets.chomp
+    end
     player1 = Player.new(name, symbol) #Creating the object for the player #1
     puts "Ok player 1, all set, your name is #{name} & your symbol is #{symbol}\n"
     
@@ -101,6 +105,10 @@ def game_start
     name = gets.chomp
     print "Hello #{name}!, now choose the symbol with you will play with: "
     symbol = gets.chomp
+    while symbol.ord <= 32 || symbol.ord >= 48 && symbol.ord <= 57 || symbol.length != 1
+        print "Invalid symbol! Enter another one (1 character long, no numbers): "
+        symbol = gets.chomp
+    end
     player2 = Player.new(name, symbol) #Creating the object for the player #2
     puts "Ok player 2, all set, your name is #{name} & your symbol is #{symbol}\n"
 
