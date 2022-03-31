@@ -59,9 +59,34 @@ end
 
 # Make a function to display the current board
 def print_board(array)
-    str = "__|__|__\n"
-    str +="__|__|__\n"
-    str +="  |  |  "
+    str = ""
+    array.each_with_index do |row, j|
+        row.each_with_index do |element, i|
+            if i == 0 || i == 2
+                if element == nil
+                   if j == 2
+                       str += " #{7 + i} "
+                   else 
+                       str += " #{i + ((j + 1) * (j + 1))} " 
+                   end
+                else
+                    str += " #{element} "
+                end
+            else
+                if element == nil
+                    if j == 2
+                        str += "| #{7 + i} |"
+                    else 
+                        str += "| #{i + ((j + 1) * (j + 1))} |"
+                    end
+                else
+                    str += "| #{element} |"
+                end
+            end
+        end
+        str += "\n---+---+---\n" unless j == 2
+    end
+    str
 end 
 
 def game_start
@@ -88,13 +113,15 @@ def game(player1, player2)
         validate_election(player1)
         is_winner = player1.check_if_winner
         if is_winner
+            puts print_board(player1.board)
             puts "#{player1.name} wins!"
             break
         end
    
         validate_election(player2)
-        player2.check_if_winner 
+        is_winner = player2.check_if_winner 
         if is_winner
+            puts print_board(player2.board)
             puts "#{player2.name} wins!"
             break
         end
@@ -103,13 +130,13 @@ end
 
 def validate_election(player)
     election = ""
+    board = player.board
     while true
-        #puts print_board()
+        puts print_board(board)
         print "#{player.name}, choose your next move: "
         election = gets.chomp
         
         election = election.to_i
-        board = player.board
         
         if election <= 3 && election > 0
             if board[0][election - 1] == nil
