@@ -109,6 +109,7 @@ end
 
 def game(player1, player2)
     is_winner = false
+    move = 0
     while true
         validate_election(player1)
         is_winner = player1.check_if_winner
@@ -117,7 +118,14 @@ def game(player1, player2)
             puts "#{player1.name} wins!"
             break
         end
-   
+        move += 1
+
+        if move == 9 # In tic tac toe it is only posible to do 9 moves, until there is a tie
+            puts print_board(player1.board)
+            puts "Oh man! it's a tie." 
+            break
+        end
+
         validate_election(player2)
         is_winner = player2.check_if_winner 
         if is_winner
@@ -125,6 +133,7 @@ def game(player1, player2)
             puts "#{player2.name} wins!"
             break
         end
+        move += 1
     end
 end
 
